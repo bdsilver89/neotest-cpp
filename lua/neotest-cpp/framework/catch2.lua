@@ -47,7 +47,7 @@ M.query = [[
 ]]
 
 function M.parse_errors(output)
-  local capture = string.match(output, "%s.%s.%s+[\r\n](.-)%=%=%=+")
+  local capture = string.match(output, "%.%.%.+[\r\n](.-)%=%=%=+")
 
   if not capture then
     logger.error("Failed to capture catch2 errors")
@@ -57,7 +57,7 @@ function M.parse_errors(output)
   local errors = {}
 
   for failures in string.gmatch(capture .. "\n\n", "(.-)[\r\n][\r\n]") do
-    for line, message in string.gmatch(failures, ".-(%d+):%sFAILED%:[\r\n](.+)") do
+    for line, message in string.gmatch(failures, ".-:(%d+):%sFAILED%:[\r\n](.+)") do
       table.insert(errors, { line = tonumber(line), message = message })
     end
   end
