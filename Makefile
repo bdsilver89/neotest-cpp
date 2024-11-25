@@ -2,13 +2,19 @@
 MINIMAL_INIT = tests/unit/minimal_init.lua
 PLENARY_OPTS = {minimal_init='${MINIMAL_INIT}', sequential=true, timeout=5000}
 
-test: unit
+test: unit integration
 
 unit: deps
 	nvim --headless -u $(MINIMAL_INIT) -c "PlenaryBustedDirectory tests/unit ${PLENARY_OPTS}"
 
+integration: integration-cmake
+
+integration-cmake:
+	$(MAKE) -C tests/integration/cmake build
+
 clean:
 	rm -rf deps/
+	$(MAKE) -C tests/integration/cmake clean
 
 deps: deps/plenary.nvim deps/nvim-treesitter deps/neotest deps/nvim-nio
 
@@ -29,4 +35,4 @@ deps/nvim-nio:
 	git clone --depth 1 https://github.com/nvim-neotest/nvim-nio.git $@
 
 
-.PHONY: test unit deps clean
+.PHONY: test unit integration integration-cmake deps clean

@@ -6,7 +6,7 @@ vim.opt.rtp:append("./deps/nvim-nio")
 vim.opt.rtp:append("./deps/neotest")
 vim.opt.rtp:append("./deps/nvim-treesitter")
 
-vim.schedule(function()
+vim.schedule_wrap(function()
   vim.cmd("TSInstallSync! lua cpp")
 end)
 
