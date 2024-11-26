@@ -40,5 +40,7 @@ luac.out
 *.hex
 
 # Misc
-*build*
+**/build
+**/cmake-build*
 *deps*
+**/subprojects/**/
