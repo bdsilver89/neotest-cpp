@@ -8,6 +8,7 @@ unit: deps
 	nvim --headless -u $(MINIMAL_INIT) -c "PlenaryBustedDirectory tests/unit ${PLENARY_OPTS}"
 
 integration: integration-cmake
+	nvim --headless -u $(MINIMAL_INIT) -c "PlenaryBustedDirectory tests/integration ${PLENARY_OPTS}"
 
 integration-cmake:
 	$(MAKE) -C tests/integration/cmake build
