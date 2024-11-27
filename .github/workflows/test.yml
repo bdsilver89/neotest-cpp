@@ -52,12 +52,12 @@ jobs:
           nvim --headless -u tests/unit/minimal_init.lua -c "TSInstallSync lua cpp" -c q
       - name: Run unit tests
         run: |
-          nvim --headless -u tests/unit/minimal_init.lua -c "PlenaryBustedDirectory tests/unit {minimal_init=tests/unit/minimal_init.lua, sequential=true, timeout=5000}"
+          nvim --headless -u tests/unit/minimal_init.lua -c "PlenaryBustedDirectory tests/unit {minimal_init='tests/unit/minimal_init.lua', sequential=true, timeout=5000}"
       - name: Run integration tests
         run: |
           cd tests/integration/cmake && cmake -S . -B build && cmake --build build
           cd tests/integration/meson && meson setup build && meson compile -C build
-          nvim --headless -u tests/unit/minimal_init.lua -c "PlenaryBustedDirectory tests/integration {minimal_init=tests/unit/minimal_init.lua, sequential=true, timeout=5000}"
+          nvim --headless -u tests/unit/minimal_init.lua -c "PlenaryBustedDirectory tests/integration {minimal_init='tests/unit/minimal_init.lua', sequential=true, timeout=5000}"
       - name: Print error logs if failure
         if: ${{ failure() }}
         shell: bash
