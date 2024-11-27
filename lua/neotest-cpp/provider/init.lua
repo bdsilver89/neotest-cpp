@@ -3,6 +3,8 @@ local lib = require("neotest-cpp.config")
 
 local M = {}
 
-function M.detect(path) end
+-- FIX: implement
+-- function M.detect(path)
+-- end
 
 return M

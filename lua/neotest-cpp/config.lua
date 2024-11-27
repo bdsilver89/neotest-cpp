@@ -26,6 +26,7 @@ local function default_root(dir)
     ".clangd",
     ".clang-format",
     ".clang-tidy",
+    "meson.build",
     "build",
     "out",
     ".git"
