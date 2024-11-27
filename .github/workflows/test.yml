@@ -17,7 +17,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        rev: [nightly, v0.9.1, v0.10.2]
+        rev: [nightly, v0.9.5, v0.10.2]
         include:
           - os: ubuntu-22.04
             CONFIG_HOME: ~/.config/nvim
@@ -47,6 +47,7 @@ jobs:
           pip install cmake==3.21 ninja meson
           mkdir -p ${{ matrix.PLUGINS_HOME }}
           mkdir -p ${{ matrix.CONFIG_HOME }}
+          cp tests/unit/minimal_init.lua ${{ matrix.CONFIG_HOME }}/init.lua
           git clone --depth 1 https://github.com/nvim-lua/plenary.nvim.git ${{ matrix.PLUGINS_HOME }}/plenary.nvim
           git clone --depth 1 https://github.com/nvim-treesitter/nvim-treesitter.git ${{ matrix.PLUGINS_HOME }}/nvim-treesitter
           git clone --depth 1 https://github.com/nvim-neotest/neotest.git ${{ matrix.PLUGINS_HOME }}/neotest
