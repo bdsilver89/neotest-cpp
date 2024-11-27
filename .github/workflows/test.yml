@@ -44,22 +44,20 @@ jobs:
         run: |
           nvim --version
           pip install cmake==3.21 ninja meson
-          mkdir -p ${{ matrix.PLUGINS_HOME }}
-          mkdir -p ${{ matrix.CONFIG_HOME }}
-          cp tests/unit/minimal_init.lua ${{ matrix.CONFIG_HOME }}/init.lua
-          git clone --depth 1 https://github.com/nvim-lua/plenary.nvim.git ${{ matrix.PLUGINS_HOME }}/plenary.nvim
-          git clone --depth 1 https://github.com/nvim-treesitter/nvim-treesitter.git ${{ matrix.PLUGINS_HOME }}/nvim-treesitter
-          git clone --depth 1 https://github.com/nvim-neotest/neotest.git ${{ matrix.PLUGINS_HOME }}/neotest
-          git clone --depth 1 https://github.com/nvim-neotest/nvim-nio.git ${{ matrix.PLUGINS_HOME }}/nvim-nio
-          nvim --headless -c "TSInstallSync lua cpp" -c q
+          mkdir -p deps
+          git clone --depth 1 https://github.com/nvim-lua/plenary.nvim.git deps/plenary.nvim
+          git clone --depth 1 https://github.com/nvim-treesitter/nvim-treesitter.git deps/nvim-treesitter
+          git clone --depth 1 https://github.com/nvim-neotest/neotest.git deps/neotest
+          git clone --depth 1 https://github.com/nvim-neotest/nvim-nio.git deps/nvim-nio
+          nvim --headless -u tests/unit/minimal_init.lua -c "TSInstallSync lua cpp" -c q
       - name: Run unit tests
         run: |
-          nvim --headless -c "PlenaryBustedDirectory tests/unit {sequential=true, timeout=5000}"
+          nvim --headless -u tests/unit/minimal_init.lua -c "PlenaryBustedDirectory tests/unit {minimal_init=tests/unit/minimal_init.lua, sequential=true, timeout=5000}"
       - name: Run integration tests
         run: |
           cd tests/integration/cmake && cmake -S . -B build && cmake --build build
           cd tests/integration/meson && meson setup build && meson compile -C build
-          nvim --headless -c "PlenaryBustedDirectory tests/integration {sequential=true, timeout=5000}"
+          nvim --headless -u tests/unit/minimal_init.lua -c "PlenaryBustedDirectory tests/integration {minimal_init=tests/unit/minimal_init.lua, sequential=true, timeout=5000}"
       - name: Print error logs if failure
         if: ${{ failure() }}
         shell: bash
