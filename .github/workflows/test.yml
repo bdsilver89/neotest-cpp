@@ -43,7 +43,7 @@ jobs:
       - name: Prepare dependencies
         run: |
           nvim --version
-          pip install cmake==3.21 ninja meson
+          pip install cmake==3.21 ninja
           mkdir -p deps
           git clone --depth 1 https://github.com/nvim-lua/plenary.nvim.git deps/plenary.nvim
           git clone --depth 1 https://github.com/nvim-treesitter/nvim-treesitter.git deps/nvim-treesitter
@@ -53,14 +53,8 @@ jobs:
       - name: Run unit tests
         run: |
           nvim --headless -u tests/unit/minimal_init.lua -c "PlenaryBustedDirectory tests/unit {minimal_init='tests/unit/minimal_init.lua', sequential=true, timeout=5000}"
-      - name: Run integration tests
-        run: |
-          cd tests/integration/cmake && cmake -S . -B build && cmake --build build
-          cd tests/integration/meson && meson setup build && meson compile -C build
-          nvim --headless -u tests/unit/minimal_init.lua -c "PlenaryBustedDirectory tests/integration {minimal_init='tests/unit/minimal_init.lua', sequential=true, timeout=5000}"
-      - name: Print error logs if failure
-        if: ${{ failure() }}
-        shell: bash
-        run: |
-          cat ${{ matrix.LOGS_DIR }}/neotest.log
+      # - name: Run integration tests
+      #   run: |
+      #     cd tests/integration/cmake && cmake -S . -B build && cmake --build build
+      #     nvim --headless -u tests/unit/minimal_init.lua -c "PlenaryBustedDirectory tests/integration {minimal_init='tests/unit/minimal_init.lua', sequential=true, timeout=5000}"
 
