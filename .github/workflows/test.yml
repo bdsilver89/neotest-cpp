@@ -1,0 +1,70 @@
+---
+name: Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize]
+  workflow_dispatch:
+
+jobs:
+  tests:
+    name: tests
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        rev: [nightly, v0.9.1, v0.10.2]
+        include:
+          - os: ubuntu-22.04
+            CONFIG_HOME: ~/.config/nvim
+            PLUGINS_HOME: ~/.local/share/nvim/lazy
+            LOGS_DIR: ~/.local/state
+          - os: macos-12
+            CONFIG_HOME: ~/.config/nvim
+            PLUGINS_HOME: ~/.local/share/nvim/lazy
+            LOGS_DIR: ~/.local/state
+          - os: windows-2022
+            CONFIG_HOME: $env:LOCALAPPDATA\nvim
+            PLUGINS_HOME: $env:LOCALAPPDATA\nvim-data\lazy
+            LOGS_DIR: $env:LOCALAPPDATA\nvim-data
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - uses: rhysd/action-setup-vim@v1
+        with:
+          neovim: true
+          version: ${{ matrix.rev }}
+      - name: Prepare dependencies
+        shell: bash
+        run: |
+          nvim --version
+          pip install cmake==3.21 ninja meson
+          mkdir -p ${{ matrix.PLUGINS_HOME }}
+          mkdir -p ${{ matrix.CONFIG_HOME }}
+          git clone --depth 1 https://github.com/nvim-lua/plenary.nvim.git ${{ matrix.PLUGINS_HOME }}/plenary.nvim
+          git clone --depth 1 https://github.com/nvim-treesitter/nvim-treesitter.git ${{ matrix.PLUGINS_HOME }}/nvim-treesitter
+          git clone --depth 1 https://github.com/nvim-neotest/neotest.git ${{ matrix.PLUGINS_HOME }}/neotest
+          git clone --depth 1 https://github.com/nvim-neotest/nvim-nio.git ${{ matrix.PLUGINS_HOME }}/nvim-nio
+          nvim --headless -c "TSInstallSync lua cpp" -c -q
+      - name: Run unit tests
+        shell: bash
+        run: |
+          nvim --headless -c "PlenaryBustedDirectory tests/unit {sequential=true, timeout=5000}"
+      - name: Run integration tests
+        shell: bash
+        run: |
+          cd tests/integration/cmake && cmake -S . -B build && cmake --build build
+          cd tests/integration/meson && meson setup build && meson compile -C build
+          nvim --headless -c "PlenaryBustedDirectory tests/integration {sequential=true, timeout=5000}"
+      - name: Print error logs if failure
+        if: ${{ failure() }}
+        shell: bash
+        run: |
+          cat ${{ matrix.LOGS_DIR }}/neotest.log
+
