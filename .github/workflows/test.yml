@@ -41,7 +41,6 @@ jobs:
           neovim: true
           version: ${{ matrix.rev }}
       - name: Prepare dependencies
-        shell: bash
         run: |
           nvim --version
           pip install cmake==3.21 ninja meson
@@ -54,11 +53,9 @@ jobs:
           git clone --depth 1 https://github.com/nvim-neotest/nvim-nio.git ${{ matrix.PLUGINS_HOME }}/nvim-nio
           nvim --headless -c "TSInstallSync lua cpp" -c -q
       - name: Run unit tests
-        shell: bash
         run: |
           nvim --headless -c "PlenaryBustedDirectory tests/unit {sequential=true, timeout=5000}"
       - name: Run integration tests
-        shell: bash
         run: |
           cd tests/integration/cmake && cmake -S . -B build && cmake --build build
           cd tests/integration/meson && meson setup build && meson compile -C build
