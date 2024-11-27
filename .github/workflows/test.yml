@@ -19,15 +19,15 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
         rev: [nightly, v0.9.5, v0.10.2]
         include:
-          - os: ubuntu-22.04
+          - os: ubuntu-latest
             CONFIG_HOME: ~/.config/nvim
             PLUGINS_HOME: ~/.local/share/nvim/lazy
             LOGS_DIR: ~/.local/state
-          - os: macos-12
+          - os: macos-latest
             CONFIG_HOME: ~/.config/nvim
             PLUGINS_HOME: ~/.local/share/nvim/lazy
             LOGS_DIR: ~/.local/state
-          - os: windows-2022
+          - os: windows-latest
             CONFIG_HOME: $env:LOCALAPPDATA\nvim
             PLUGINS_HOME: $env:LOCALAPPDATA\nvim-data\lazy
             LOGS_DIR: $env:LOCALAPPDATA\nvim-data
